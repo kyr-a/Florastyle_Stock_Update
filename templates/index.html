@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management - Florastyle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #436243 0%, #9bc689 100%);
+            color: white;
+            padding: 40px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .logo-container {
+            flex-shrink: 0;
+        }
+        
+        .logo-container a {
+            display: inline-block;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .logo-container a:hover {
+            opacity: 0.9;
+        }
+        
+        .logo {
+            max-height: 80px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .header-text {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+        
+        .actions {
+            padding: 24px 50px;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e0e4e7;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #436243;
+            box-shadow: 0 0 0 3px rgba(67, 98, 67, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .search-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            white-space: nowrap;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+        
+        .btn-primary {
+            background: #436243;
+            color: white;
+            box-shadow: 0 2px 4px rgba(67, 98, 67, 0.2);
+        }
+        
+        .btn-primary:hover {
+            background: #354d35;
+            box-shadow: 0 4px 8px rgba(67, 98, 67, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #436243;
+            border: 1px solid #e0e4e7;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #d0d5d9;
+            transform: translateY(-1px);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e8ecef;
+            background: #ffffff;
+            padding: 0 50px;
+            gap: 0;
+        }
+        
+        .tab-button {
+            padding: 16px 32px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.2s ease;
+            position: relative;
+            top: 2px;
+        }
+        
+        .tab-button:hover {
+            color: #436243;
+            background: #f8f9fa;
+        }
+        
+        .tab-button.active {
+            color: #436243;
+            border-bottom-color: #436243;
+            font-weight: 600;
+        }
+        
+        .tab-dropdown {
+            display: none;
+            width: 100%;
+            padding: 12px 16px;
+            margin: 0;
+            border: 1px solid #e0e4e7;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23436243' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+        
+        .tab-dropdown:focus {
+            outline: none;
+            border-color: #436243;
+            box-shadow: 0 0 0 3px rgba(67, 98, 67, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .info-bar {
+            padding: 16px 50px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e8ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .info-text {
+            font-size: 14px;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .count {
+            font-weight: 600;
+            color: #436243;
+            font-size: 16px;
+        }
+        
+        .table-container {
+            padding: 0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #436243 0%, #9bc689 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 16px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        th:first-child {
+            padding-left: 36px;
+        }
+        
+        th:last-child {
+            padding-right: 36px;
+        }
+        
+        tbody tr {
+            background-color: white;
+            transition: background-color 0.15s ease;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:last-child {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8fbf8;
+        }
+        
+        td {
+            padding: 16px 16px;
+            color: #2c3e50;
+            background: white;
+            font-size: 14px;
+        }
+        
+        td:first-child {
+            padding-left: 36px;
+        }
+        
+        td:last-child {
+            padding-right: 36px;
+        }
+        
+        .error {
+            margin: 30px 50px;
+            padding: 20px 24px;
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #e53e3e;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .error strong {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .info {
+            margin: 30px 50px;
+            padding: 20px 24px;
+            background: #f0f9ff;
+            color: #0369a1;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .empty-state {
+            padding: 60px 50px;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .empty-state p {
+            font-size: 15px;
+            margin-top: 12px;
+        }
+        
+        .disclaimer {
+            margin: 30px 50px;
+            padding: 20px 24px;
+            background: #fffbf0;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .disclaimer strong {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .header {
+                padding: 30px 24px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .logo {
+                max-height: 60px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .actions {
+                padding: 20px 24px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 12px;
+            }
+            
+            .search-label {
+                display: none;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .btn-group {
+                width: 100%;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .info-bar {
+                padding: 16px 24px;
+            }
+            
+            th:first-child,
+            td:first-child {
+                padding-left: 20px;
+            }
+            
+            th:last-child,
+            td:last-child {
+                padding-right: 20px;
+            }
+            
+            .error,
+            .info,
+            .disclaimer {
+                margin: 20px 24px;
+            }
+            
+            .tabs {
+                padding: 0 24px;
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                display: none;
+            }
+            
+            .tab-dropdown {
+                display: block;
+                margin: 0 24px 16px 24px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .header p {
+                font-size: 0.875rem;
+            }
+            
+            th,
+            td {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <a href="https://florastyle.co.za/" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ url_for('static', filename='New Florastyle Hi Res Logo.png') }}" alt="Florastyle Logo" class="logo">
+                    </a>
+                </div>
+                <div class="header-text">
+                    <h1>Stock Management</h1>
+                    <p>Inventory Data Dashboard</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <div class="search-container">
+                <label for="search-input" class="search-label">Search:</label>
+                <input type="text" id="search-input" class="search-input" placeholder="Search by description or supplier code..." onkeyup="filterTable()">
+            </div>
+            <div class="btn-group">
+                <a href="/" class="btn btn-secondary">Refresh Data</a>
+                <a href="https://florastyle.co.za/pages/download-catalogue" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Download Catalogue</a>
+                <a href="/export?tab=allproducts" id="export-btn" class="btn btn-primary">Export to Excel</a>
+            </div>
+        </div>
+        
+        {% if error %}
+        <div class="error">
+            <strong>Error</strong>
+            {{ error }}
+        </div>
+        {% else %}
+        <div class="tabs">
+            <select class="tab-dropdown" id="tab-dropdown" onchange="switchTabFromDropdown(this.value)">
+                <option value="japi">Japi Planters</option>
+                <option value="driptrays">Driptrays</option>
+                <option value="dropin">Drop-in Pots</option>
+                <option value="waterfeatures">Water Features</option>
+                <option value="nbfx">Organic Feature Pots</option>
+                <option value="plasticmats">Plastic Woven Mats</option>
+                <option value="allproducts">All Products</option>
+            </select>
+            <button class="tab-button active" onclick="switchTab('japi', this)">Japi Planters</button>
+            <button class="tab-button" onclick="switchTab('driptrays', this)">Driptrays</button>
+            <button class="tab-button" onclick="switchTab('dropin', this)">Drop-in Pots</button>
+            <button class="tab-button" onclick="switchTab('waterfeatures', this)">Water Features</button>
+            <button class="tab-button" onclick="switchTab('nbfx', this)">Organic Feature Pots</button>
+            <button class="tab-button" onclick="switchTab('plasticmats', this)">Plastic Woven Mats</button>
+            <button class="tab-button" onclick="switchTab('allproducts', this)">All Products</button>
+        </div>
+        
+        <!-- Japi Planters Tab -->
+        <div id="tab-japi" class="tab-content active">
+            {% if japi_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ japi_products|length }}</span>
+                    <span>items</span>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in japi_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ product.Onhand_Available or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Japi Planters products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Driptrays Tab -->
+        <div id="tab-driptrays" class="tab-content">
+            {% if driptrays_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ driptrays_products|length }}</span>
+                    <span>items</span>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in driptrays_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ product.Onhand_Available or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Driptrays products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Drop-in Pots Tab -->
+        <div id="tab-dropin" class="tab-content">
+            {% if dropin_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ dropin_products|length }}</span>
+                    <span>items</span>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in dropin_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ product.Onhand_Available or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Drop-in Pots products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Water Features Tab -->
+        <div id="tab-waterfeatures" class="tab-content">
+            <div class="disclaimer">
+                <strong>Important Notice</strong>
+                Water features are made to order and require a 7 day lead time.
+            </div>
+            
+            {% if water_features_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ water_features_products|length }}</span>
+                    <span>items</span>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in water_features_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Water Features products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Organic Feature Pots Tab -->
+        <div id="tab-nbfx" class="tab-content">
+            <div class="empty-state">
+                <div class="info">
+                    <strong>Coming Soon</strong>
+                    <p>This section will be populated in the future.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plastic Woven Mats Tab -->
+        <div id="tab-plasticmats" class="tab-content">
+            <div class="empty-state">
+                <div class="info">
+                    <strong>Coming Soon</strong>
+                    <p>This section will be populated in the future.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- All Products Tab -->
+        <div id="tab-allproducts" class="tab-content">
+            {% if all_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ all_products|length }}</span>
+                    <span>items</span>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in all_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ product.Onhand_Available or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        function switchTab(tabName, buttonElement) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Add active class to clicked tab button
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+            
+            // Update dropdown to reflect the active tab
+            const dropdown = document.getElementById('tab-dropdown');
+            if (dropdown) {
+                dropdown.value = tabName;
+            }
+            
+            // Update export button to export current tab
+            updateExportButton(tabName);
+            
+            // Re-apply search filter when switching tabs
+            filterTable();
+        }
+        
+        function switchTabFromDropdown(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Update the corresponding tab button (for desktop)
+            const buttons = document.querySelectorAll('.tab-button');
+            const tabMapping = {
+                'japi': 0,
+                'driptrays': 1,
+                'dropin': 2,
+                'waterfeatures': 3,
+                'nbfx': 4,
+                'plasticmats': 5,
+                'allproducts': 6
+            };
+            if (tabMapping[tabName] !== undefined && buttons[tabMapping[tabName]]) {
+                buttons[tabMapping[tabName]].classList.add('active');
+            }
+            
+            // Update export button to export current tab
+            updateExportButton(tabName);
+            
+            // Re-apply search filter when switching tabs
+            filterTable();
+        }
+        
+        function updateExportButton(tabName) {
+            const exportBtn = document.getElementById('export-btn');
+            if (exportBtn) {
+                exportBtn.href = '/export?tab=' + tabName;
+            }
+        }
+        
+        function filterTable() {
+            const searchInput = document.getElementById('search-input');
+            if (!searchInput) return;
+            
+            const filter = searchInput.value.toUpperCase().trim();
+            
+            // Get the currently active tab content
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+            
+            // Get the table in the active tab
+            const table = activeTab.querySelector('table');
+            if (!table) return;
+            
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+            
+            const rows = tbody.querySelectorAll('tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                // Get the cells - Description is first, Supplier Code is second
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 2) return;
+                
+                const description = (cells[0].textContent || cells[0].innerText || '').toUpperCase();
+                const supplierCode = (cells[1].textContent || cells[1].innerText || '').toUpperCase();
+                
+                // Check if search term matches description or supplier code
+                const matches = filter === '' || 
+                               description.indexOf(filter) > -1 || 
+                               supplierCode.indexOf(filter) > -1;
+                
+                if (matches) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update the count in info-bar if it exists
+            const infoBar = activeTab.querySelector('.info-bar');
+            if (infoBar) {
+                const countElement = infoBar.querySelector('.count');
+                if (countElement && filter !== '') {
+                    // Store original count if not already stored
+                    if (!countElement.dataset.original) {
+                        countElement.dataset.original = countElement.textContent;
+                    }
+                    countElement.textContent = visibleCount;
+                } else if (countElement && countElement.dataset.original) {
+                    // Restore original count when filter is cleared
+                    countElement.textContent = countElement.dataset.original;
+                }
+            }
+        }
+        
+        // Initialize search on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterTable);
+            }
+            
+            // Initialize export button for default tab (japi)
+            updateExportButton('japi');
+        });
+    </script>
+</body>
+</html>
