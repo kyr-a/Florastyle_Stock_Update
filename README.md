@@ -72,3 +72,5 @@ Florastyle_Stock_Update/
 - requests 2.31.0
 - pandas 2.1.3
 - openpyxl 3.1.2
+
+## Working?
