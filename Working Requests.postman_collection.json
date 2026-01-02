@@ -1,0 +1,55 @@
+{
+	"info": {
+		"_postman_id": "eebde18d-740d-4698-81c4-f271b9583c09",
+		"name": "Working Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50403064",
+		"_collection_link": "https://scraggkyra-507189.postman.co/workspace/Kyra-Scragg's-Workspace~3c3f1498-86d0-441d-8dc4-9dddac6cfb9b/collection/50403064-eebde18d-740d-4698-81c4-f271b9583c09?action=share&source=collection_link&creator=50403064"
+	},
+	"item": [
+		{
+			"name": "IQ_API_Request_Stock_Working",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic OTk6QVBJVGVzdA=="
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<IQ_API>\r\n\t<IQ_API_Request_Stock>\r\n\t\t<IQ_Company_Number>F01</IQ_Company_Number>\r\n\t\t<IQ_Terminal_Number>1</IQ_Terminal_Number>\r\n\t\t<IQ_User_Number>11</IQ_User_Number>\r\n\t\t<IQ_User_Password>257B95EDADE4F097BD73E88534511D197D3A545B</IQ_User_Password>\r\n\t\t<IQ_Partner_Passphrase>743B25C6C57BA9A4D02EBBAD9D11B9ADC47A1BCA</IQ_Partner_Passphrase>\r\n\t</IQ_API_Request_Stock>\r\n</IQ_API>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.5.90:8090/IQRetailRestAPI/v1/IQ_API_Request_Stock_Attributes?callformat=xml",
+					"protocol": "http",
+					"host": [
+						"192.168.5.90:8090"
+					],
+					"path": [
+						"IQRetailRestAPI",
+						"v1",
+						"IQ_API_Request_Stock_Attributes"
+					],
+					"query": [
+						{
+							"key": "callformat",
+							"value": "xml"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
