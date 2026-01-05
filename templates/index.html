@@ -371,6 +371,10 @@
             line-height: 1.5;
         }
         
+        .cache-notice {
+            margin: 20px 50px;
+        }
+        
         .empty-state {
             padding: 60px 50px;
             text-align: center;
@@ -467,7 +471,8 @@
             
             .error,
             .info,
-            .disclaimer {
+            .disclaimer,
+            .cache-notice {
                 margin: 20px 24px;
             }
             
@@ -536,7 +541,14 @@
             <strong>Error</strong>
             {{ error }}
         </div>
-        {% else %}
+        {% elif is_cached and cache_timestamp %}
+        <div class="info cache-notice">
+            <strong>⚠️ Using Cached Data</strong>
+            <p>The API is currently unavailable. Displaying cached data from <strong>{{ cache_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>.</p>
+        </div>
+        {% endif %}
+        
+        {% if not error %}
         <div class="tabs">
             <select class="tab-dropdown" id="tab-dropdown" onchange="switchTabFromDropdown(this.value)">
                 <option value="japi">Japi Planters</option>

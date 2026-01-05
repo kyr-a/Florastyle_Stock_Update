@@ -3,9 +3,19 @@ import requests
 import xml.etree.ElementTree as ET
 import pandas as pd
 from io import BytesIO
-from datetime import datetime
+from datetime import datetime, timedelta
+import threading
+import time
 
 app = Flask(__name__)
+
+# Cache storage
+cache = {
+    'data': None,
+    'timestamp': None,
+    'lock': threading.Lock()
+}
+CACHE_DURATION = timedelta(minutes=5)  # Cache expires after 5 minutes
 
 # API Configuration from Postman collection
 API_URL = "http://192.168.5.90:8090/IQRetailRestAPI/v1/IQ_API_Request_Stock_Attributes?callformat=xml"
@@ -16,9 +26,9 @@ API_HEADERS = {
 API_BODY = """<IQ_API>
 	<IQ_API_Request_Stock>
 		<IQ_Company_Number>F01</IQ_Company_Number>
-		<IQ_Terminal_Number>1</IQ_Terminal_Number>
-		<IQ_User_Number>11</IQ_User_Number>
-		<IQ_User_Password>257B95EDADE4F097BD73E88534511D197D3A545B</IQ_User_Password>
+		<IQ_Terminal_Number>22</IQ_Terminal_Number>
+		<IQ_User_Number>52</IQ_User_Number>
+		<IQ_User_Password>1E68EEE44919E675F5A8A455A755789099B54E4D</IQ_User_Password>
 		<IQ_Partner_Passphrase>743B25C6C57BA9A4D02EBBAD9D11B9ADC47A1BCA</IQ_Partner_Passphrase>
 	</IQ_API_Request_Stock>
 </IQ_API>"""
@@ -136,14 +146,64 @@ def fetch_stock_data():
         return {'error': f'Unexpected Error: {str(e)}'}
 
 
+def get_cached_stock_data():
+    """Get stock data from cache or fetch new data if cache is stale/missing.
+    Returns tuple: (data, timestamp, is_cached) where is_cached indicates if cached data was used."""
+    with cache['lock']:
+        now = datetime.now()
+        
+        # Check if cache is valid
+        if cache['data'] is not None and cache['timestamp'] is not None:
+            if now - cache['timestamp'] < CACHE_DURATION:
+                # Cache is still valid, return it
+                return cache['data'], cache['timestamp'], True
+        
+        # Cache is stale or missing, try to fetch new data
+        result = fetch_stock_data()
+        
+        # Check if API call failed (result is a dict with 'error' key)
+        if isinstance(result, dict) and 'error' in result:
+            # API call failed, return cached data if available
+            if cache['data'] is not None and cache['timestamp'] is not None:
+                return cache['data'], cache['timestamp'], True
+            else:
+                # No cached data available, return error
+                return result, None, False
+        
+        # API call succeeded, update cache
+        cache['data'] = result
+        cache['timestamp'] = now
+        
+        return result, now, False
+
+
+def update_cache_periodically():
+    """Background thread function to update cache every 5 minutes"""
+    while True:
+        try:
+            time.sleep(CACHE_DURATION.total_seconds())
+            # Fetch new data and update cache only if successful
+            with cache['lock']:
+                result = fetch_stock_data()
+                # Only update cache if API call succeeded (not an error)
+                if not (isinstance(result, dict) and 'error' in result):
+                    cache['data'] = result
+                    cache['timestamp'] = datetime.now()
+                    print(f"Cache updated at {cache['timestamp']}")
+                else:
+                    print(f"Cache update failed: {result.get('error', 'Unknown error')}. Keeping existing cache.")
+        except Exception as e:
+            print(f"Error updating cache: {str(e)}. Keeping existing cache.")
+
+
 @app.route('/')
 def index():
     """Main page - fetch and display stock data"""
-    result = fetch_stock_data()
+    result, cache_timestamp, is_cached = get_cached_stock_data()
     
-    # If there's an error, return it
+    # If there's an error and no cached data, return it
     if isinstance(result, dict) and 'error' in result:
-        return render_template('index.html', error=result['error'], japi_products=[], dropin_products=[], driptrays_products=[], water_features_products=[], nb_fx_products=[], all_products=[])
+        return render_template('index.html', error=result['error'], japi_products=[], dropin_products=[], driptrays_products=[], water_features_products=[], nb_fx_products=[], all_products=[], cache_timestamp=None, is_cached=False)
     
     # Convert to list if needed
     if not isinstance(result, list):
@@ -200,7 +260,7 @@ def index():
     
     all_products = sorted(all_products_filtered, key=lambda x: (x.get('Description') or '').lower())
     
-    return render_template('index.html', error=None, japi_products=japi_products, dropin_products=dropin_products, driptrays_products=driptrays_products, water_features_products=water_features_products, nb_fx_products=nb_fx_products, all_products=all_products)
+    return render_template('index.html', error=None, japi_products=japi_products, dropin_products=dropin_products, driptrays_products=driptrays_products, water_features_products=water_features_products, nb_fx_products=nb_fx_products, all_products=all_products, cache_timestamp=cache_timestamp, is_cached=is_cached)
 
 
 @app.route('/export')
@@ -211,8 +271,8 @@ def export_excel():
     # Get the tab parameter from query string
     tab = request.args.get('tab', 'allproducts')
     
-    # Fetch all stock data
-    result = fetch_stock_data()
+    # Fetch all stock data from cache
+    result, cache_timestamp, is_cached = get_cached_stock_data()
     
     # Handle errors
     if isinstance(result, dict) and 'error' in result:
@@ -335,5 +395,14 @@ def export_excel():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Initialize cache on startup
+    print("Initializing cache...")
+    get_cached_stock_data()
+    
+    # Start background thread to update cache periodically
+    cache_thread = threading.Thread(target=update_cache_periodically, daemon=True)
+    cache_thread.start()
+    print("Cache update thread started. Cache will refresh every 5 minutes.")
+    
+    app.run(debug=True, host='127.0.0.1', port=6200)
 
