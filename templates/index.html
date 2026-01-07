@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Management - Florastyle</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='New Florastyle Hi Res Logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='New Florastyle Hi Res Logo.png') }}">
     <style>
         * {
             margin: 0;
@@ -506,6 +508,11 @@
                 font-size: 13px;
             }
         }
+        
+        .out-of-stock {
+            color: rgb(153, 0, 0);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -542,10 +549,16 @@
             {{ error }}
         </div>
         {% elif is_cached and cache_timestamp %}
+        {% if api_error %}
         <div class="info cache-notice">
             <strong>⚠️ Using Cached Data</strong>
             <p>The API is currently unavailable. Displaying cached data from <strong>{{ cache_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>.</p>
         </div>
+        {% else %}
+        <div class="info cache-notice">
+            <p>Displaying data from <strong>{{ cache_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong>.</p>
+        </div>
+        {% endif %}
         {% endif %}
         
         {% if not error %}
@@ -593,7 +606,7 @@
                         <tr>
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
-                            <td>{{ product.Onhand_Available or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -634,7 +647,7 @@
                         <tr>
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
-                            <td>{{ product.Onhand_Available or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -675,7 +688,7 @@
                         <tr>
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
-                            <td>{{ product.Onhand_Available or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -713,6 +726,7 @@
                         <tr>
                             <th>Description</th>
                             <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -720,6 +734,7 @@
                         <tr>
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -737,22 +752,84 @@
         
         <!-- Organic Feature Pots Tab -->
         <div id="tab-nbfx" class="tab-content">
-            <div class="empty-state">
-                <div class="info">
-                    <strong>Coming Soon</strong>
-                    <p>This section will be populated in the future.</p>
+            {% if nb_fx_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ nb_fx_products|length }}</span>
+                    <span>items</span>
                 </div>
             </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in nb_fx_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Organic Feature Pots products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
         </div>
         
         <!-- Plastic Woven Mats Tab -->
         <div id="tab-plasticmats" class="tab-content">
-            <div class="empty-state">
-                <div class="info">
-                    <strong>Coming Soon</strong>
-                    <p>This section will be populated in the future.</p>
+            {% if plasticmats_products %}
+            <div class="info-bar">
+                <div class="info-text">
+                    <span>Total Products:</span>
+                    <span class="count">{{ plasticmats_products|length }}</span>
+                    <span>items</span>
                 </div>
             </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Supplier Item Code</th>
+                            <th>Onhand Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in plasticmats_products %}
+                        <tr>
+                            <td>{{ product.Description or '-' }}</td>
+                            <td>{{ product.Supplier_Item_Code or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="info">
+                    <strong>No Data Available</strong>
+                    <p>No Plastic Woven Mats products found. Please check the API connection and try refreshing.</p>
+                </div>
+            </div>
+            {% endif %}
         </div>
         
         <!-- All Products Tab -->
@@ -780,7 +857,7 @@
                         <tr>
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
-                            <td>{{ product.Onhand_Available or '-' }}</td>
+                            <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
