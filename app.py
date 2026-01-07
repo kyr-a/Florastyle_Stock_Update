@@ -374,6 +374,9 @@ def index():
     
     for product in result:
         supplier_code = (product.get('Supplier_Item_Code') or '').strip().upper()
+        # Skip products without a supplier item code
+        if not supplier_code:
+            continue
         description = (product.get('Description') or '').strip().upper()
         
         # Priority 1: Water Features (Supplier_Item_Code starts with "W")
@@ -420,6 +423,10 @@ def index():
     excluded_words = ['Delivery', 'Voluto', 'Nativa', 'Miscellaneous']
     all_products_filtered = []
     for product in result:
+        supplier_code = (product.get('Supplier_Item_Code') or '').strip()
+        # Skip products without a supplier item code
+        if not supplier_code:
+            continue
         description = (product.get('Description') or '').strip()
         # Check if description contains any excluded words (case-insensitive)
         if not any(word.lower() in description.lower() for word in excluded_words):
@@ -467,6 +474,9 @@ def staff():
     
     for product in result:
         supplier_code = (product.get('Supplier_Item_Code') or '').strip().upper()
+        # Skip products without a supplier item code
+        if not supplier_code:
+            continue
         description = (product.get('Description') or '').strip().upper()
         
         # Priority 1: Water Features (Supplier_Item_Code starts with "W")
@@ -513,6 +523,10 @@ def staff():
     excluded_words = ['Delivery', 'Voluto', 'Nativa', 'Miscellaneous']
     all_products_filtered = []
     for product in result:
+        supplier_code = (product.get('Supplier_Item_Code') or '').strip()
+        # Skip products without a supplier item code
+        if not supplier_code:
+            continue
         description = (product.get('Description') or '').strip()
         # Check if description contains any excluded words (case-insensitive)
         if not any(word.lower() in description.lower() for word in excluded_words):
@@ -561,6 +575,10 @@ def export_excel():
         excluded_words = ['Delivery', 'Voluto', 'Nativa', 'Miscellaneous']
         products = []
         for product in result:
+            supplier_code = (product.get('Supplier_Item_Code') or '').strip()
+            # Skip products without a supplier item code
+            if not supplier_code:
+                continue
             description = (product.get('Description') or '').strip()
             # Check if description contains any excluded words (case-insensitive)
             if not any(word.lower() in description.lower() for word in excluded_words):
@@ -584,6 +602,9 @@ def export_excel():
         
         for product in result:
             supplier_code = (product.get('Supplier_Item_Code') or '').strip().upper()
+            # Skip products without a supplier item code
+            if not supplier_code:
+                continue
             description = (product.get('Description') or '').strip().upper()
             
             # Priority 1: Water Features (Supplier_Item_Code starts with "W")
@@ -641,6 +662,10 @@ def export_excel():
             excluded_words = ['Delivery', 'Voluto', 'Nativa', 'Miscellaneous']
             products = []
             for product in result:
+                supplier_code = (product.get('Supplier_Item_Code') or '').strip()
+                # Skip products without a supplier item code
+                if not supplier_code:
+                    continue
                 description = (product.get('Description') or '').strip()
                 # Check if description contains any excluded words (case-insensitive)
                 if not any(word.lower() in description.lower() for word in excluded_words):
