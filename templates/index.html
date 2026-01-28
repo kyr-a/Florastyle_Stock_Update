@@ -599,6 +599,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -607,6 +608,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -640,6 +642,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -648,6 +651,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -681,6 +685,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -689,6 +694,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -727,6 +733,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -735,6 +742,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -768,6 +776,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -776,6 +785,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -809,6 +819,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -817,6 +828,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -850,6 +862,7 @@
                             <th>Description</th>
                             <th>Supplier Item Code</th>
                             <th>Onhand Available</th>
+                            {% if is_staff %}<th>Incoming Stock</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -858,6 +871,7 @@
                             <td>{{ product.Description or '-' }}</td>
                             <td>{{ product.Supplier_Item_Code or '-' }}</td>
                             <td>{{ format_onhand(product.Onhand_Available, is_staff)|safe }}</td>
+                            {% if is_staff %}<td>{{ product.PURCHASEOR or '-' }}</td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

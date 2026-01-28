@@ -69,7 +69,7 @@ def fetch_stock_data():
             # Remove namespace prefixes if present
             tag_name = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
             
-            if tag_name in ['Description', 'Supplier_Item_Code', 'Onhand_Available']:
+            if tag_name in ['Description', 'Supplier_Item_Code', 'Onhand_Available', 'PURCHASEOR']:
                 # Find the parent element that likely represents a product/item
                 current = elem
                 item_element = None
@@ -97,7 +97,8 @@ def fetch_stock_data():
                     parent_products[key_id] = {
                         'Description': '',
                         'Supplier_Item_Code': '',
-                        'Onhand_Available': ''
+                        'Onhand_Available': '',
+                        'PURCHASEOR': ''
                     }
                 
                 parent_products[key_id][tag_name] = elem.text or '' if elem.text else ''
@@ -110,6 +111,7 @@ def fetch_stock_data():
             descriptions = []
             supplier_codes = []
             onhand_values = []
+            purchaseor_values = []
             
             for elem in root.iter():
                 tag_name = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
@@ -120,19 +122,23 @@ def fetch_stock_data():
                     supplier_codes.append(elem.text or '')
                 elif tag_name == 'Onhand_Available':
                     onhand_values.append(elem.text or '')
+                elif tag_name == 'PURCHASEOR':
+                    purchaseor_values.append(elem.text or '')
             
             # Match by position
-            max_len = max(len(descriptions), len(supplier_codes), len(onhand_values))
+            max_len = max(len(descriptions), len(supplier_codes), len(onhand_values), len(purchaseor_values))
             for i in range(max_len):
                 desc = descriptions[i] if i < len(descriptions) else ''
                 code = supplier_codes[i] if i < len(supplier_codes) else ''
                 onhand = onhand_values[i] if i < len(onhand_values) else ''
+                purchaseor = purchaseor_values[i] if i < len(purchaseor_values) else ''
                 
                 if desc or code or onhand:
                     products.append({
                         'Description': desc,
                         'Supplier_Item_Code': code,
-                        'Onhand_Available': onhand
+                        'Onhand_Available': onhand,
+                        'PURCHASEOR': purchaseor
                     })
         
         # Remove empty products
