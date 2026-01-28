@@ -420,7 +420,7 @@ def index():
     plasticmats_products = sorted(plasticmats_products, key=lambda x: (x.get('Description') or '').lower())
     
     # Filter all_products to exclude products with certain words in description
-    excluded_words = ['Delivery', 'Voluto', 'Nativa', 'Miscellaneous']
+    excluded_words = ['Delivery', 'Miscellaneous']
     all_products_filtered = []
     for product in result:
         supplier_code = (product.get('Supplier_Item_Code') or '').strip()
